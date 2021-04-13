@@ -1,4 +1,5 @@
-# test_assignment
+# test_assignment_2.0
+update with concurrent requests
 
 # About
 Create a project - HTTP-service for users DB.
