@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -95,11 +94,9 @@ func (s *store) UpdateUserByID(id int, field, value string) (user *User, err err
 	b := []byte(user.Data)
 	var d Data
 	err = json.Unmarshal(b, &d)
-	fmt.Println(d.FirstName)
 	if err != nil {
 		return
 	}
-	// v := value[1 : len(value)-1]
 	switch field {
 	case "first_name":
 		d.FirstName = value

@@ -2,7 +2,6 @@ package user
 
 import (
 	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/jmoiron/sqlx"
@@ -24,7 +23,7 @@ func NewService(store *store, db *sqlx.DB, e *echo.Echo) *echo.Echo {
 
 	e.GET("/user/:id", u.getUser)
 	e.POST("/user/:id", u.saveUser)
-	e.PATCH("/user/:id?field=field&value=value", u.updateUser)
+	e.PUT("/user/:id?field=field&value=value", u.updateUser)
 
 	return e
 }
@@ -69,23 +68,19 @@ func (s *Service) saveUser(c echo.Context) error {
 
 // updateUser creates handler for update user
 func (s *Service) updateUser(c echo.Context) error {
-	// var mutex = &sync.Mutex{}
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.String(404, "bad id request")
 	}
 	field := c.QueryParam("field")
 	value := c.QueryParam("value")
-	fmt.Println(field, value)
 	_, err = s.store.GetUserByID(id)
 	if err != nil {
 		return c.String(404, err.Error())
 	}
-	// mutex.Lock()
 	result, err := s.store.UpdateUserByID(id, field, value)
 	if err != nil {
 		return c.String(400, err.Error())
 	}
-	// mutex.Unlock()
 	return c.JSON(200, result)
 }

@@ -59,14 +59,18 @@ func TestUpdateUserByID(t *testing.T) {
 		fmt.Println(err)
 		return
 	}
+	defer db.Close()
 	sqlxDB := sqlx.NewDb(db, "sqlmock")
 	str := `{"first_name":"AAA","last_name":"BBB","interests":"CCC"}`
 	storeUser := NewStore(sqlxDB)
-	u := User{Data: str}
 	field := "first_name"
-	value := "AAA"
-	mock.ExpectExec(`UPDATE users`).WithArgs(str, 1).WillReturnResult(sqlmock.NewResult(0, 1))
-	if _, err = storeUser.UpdateUserByID(1, field, value, u); err != nil {
+	value := "DDD"
+
+	mock.ExpectBegin()
+	mock.ExpectExec("UPDATE users").WithArgs(str, 1).WillReturnResult(sqlmock.NewResult(0, 1))
+	mock.ExpectCommit()
+
+	if _, err = storeUser.UpdateUserByID(1, field, value); err != nil {
 		t.Errorf("error was not expected while updating stats: %s", err)
 	}
 
